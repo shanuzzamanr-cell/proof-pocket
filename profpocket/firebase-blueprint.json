@@ -1,0 +1,60 @@
+{
+  "entities": {
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "User account profile and preferences in ProofPocket",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
+        "displayName": { "type": "string", "maxLength": 100 },
+        "email": { "type": "string", "maxLength": 200 },
+        "photoURL": { "type": "string", "maxLength": 1000 },
+        "preferredCurrency": { "type": "string", "enum": ["USD", "EUR", "GBP", "CAD", "AUD", "JPY"] },
+        "themePreference": { "type": "string", "enum": ["light", "dark", "system"] },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["uid", "email"]
+    },
+    "Purchase": {
+      "title": "Purchase",
+      "description": "Individual purchase receipt and warranty tracking record",
+      "type": "object",
+      "properties": {
+        "productName": { "type": "string", "maxLength": 200 },
+        "brand": { "type": "string", "maxLength": 100 },
+        "purchasePrice": { "type": "number" },
+        "currency": { "type": "string", "maxLength": 10 },
+        "purchaseDate": { "type": "string", "maxLength": 20 },
+        "hasWarranty": { "type": "boolean" },
+        "warrantyDuration": { "type": "number" },
+        "warrantyUnit": { "type": "string", "enum": ["months", "years"] },
+        "warrantyExpiryDate": { "type": "string", "maxLength": 20 },
+        "returnDeadline": { "type": "string", "maxLength": 20 },
+        "storeName": { "type": "string", "maxLength": 150 },
+        "storeLocation": { "type": "string", "maxLength": 200 },
+        "category": { "type": "string", "maxLength": 50 },
+        "receiptUrl": { "type": "string", "maxLength": 2000000 },
+        "receiptImage": { "type": "string", "maxLength": 2000000 },
+        "productImage": { "type": "string", "maxLength": 1000 },
+        "orderNumber": { "type": "string", "maxLength": 100 },
+        "serialNumber": { "type": "string", "maxLength": 100 },
+        "notes": { "type": "string", "maxLength": 2000 },
+        "userId": { "type": "string", "maxLength": 128 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["productName", "brand", "purchasePrice", "storeName", "purchaseDate"]
+    }
+  },
+  "firestore": {
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "User profile document containing preferences and account metadata"
+    },
+    "/users/{userId}/purchases/{purchaseId}": {
+      "schema": "Purchase",
+      "description": "Subcollection of all purchases, receipts, and warranties belonging to a specific user"
+    }
+  }
+}

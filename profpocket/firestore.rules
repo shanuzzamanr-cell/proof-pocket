@@ -1,0 +1,75 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Default deny catch-all safety net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    // User profile isolation
+    match /users/{userId} {
+      // Direct document get only by owner
+      allow get: if isOwner(userId) && isValidId(userId);
+      // Deny collection listing
+      allow list: if false;
+
+      // Creation by authenticated owner
+      allow create: if isOwner(userId) && isValidId(userId)
+        && incoming().uid == userId
+        && incoming().email is string
+        && incoming().email.size() <= 200;
+
+      // Updates restricted to the owner
+      allow update: if isOwner(userId) && isValidId(userId)
+        && incoming().uid == existing().uid;
+
+      // Deletion by owner
+      allow delete: if isOwner(userId) && isValidId(userId);
+
+      // Subcollection for user purchases
+      match /purchases/{purchaseId} {
+        // Only the owner can read single purchase documents or query their list
+        allow get: if isOwner(userId) && isValidId(purchaseId);
+        allow list: if isOwner(userId);
+
+        // Owner can create purchases under their own UID
+        allow create: if isOwner(userId) && isValidId(purchaseId)
+          && incoming().productName is string && incoming().productName.size() > 0 && incoming().productName.size() <= 250
+          && incoming().brand is string && incoming().brand.size() > 0 && incoming().brand.size() <= 150
+          && (incoming().purchasePrice is number || incoming().price is number)
+          && incoming().storeName is string && incoming().storeName.size() <= 200;
+
+        // Owner can update purchases
+        allow update: if isOwner(userId) && isValidId(purchaseId)
+          && incoming().productName is string && incoming().productName.size() > 0 && incoming().productName.size() <= 250
+          && incoming().brand is string && incoming().brand.size() > 0 && incoming().brand.size() <= 150;
+
+        // Owner can delete their purchases
+        allow delete: if isOwner(userId) && isValidId(purchaseId);
+      }
+    }
+  }
+}

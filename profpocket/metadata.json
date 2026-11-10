@@ -1,0 +1,8 @@
+{
+  "name": "Remix ProofPocket",
+  "description": "Premium purchase memory, digital receipt vault, and warranty management app.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}
