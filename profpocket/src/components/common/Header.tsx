@@ -1,11 +1,11 @@
+
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { useAuth } from '../../context/AuthContext';
-import { 
-  Plus, 
-  Sun, 
-  Moon, 
-  ShieldCheck, 
+import {
+  Plus,
+  Sun,
+  Moon,
   Search,
   Cloud,
   CloudOff,
@@ -15,15 +15,15 @@ import { NotificationBell } from './NotificationBell';
 import { ReceiptScannerModal } from '../scanner/ReceiptScannerModal';
 
 export const Header: React.FC = () => {
-  const { 
-    activeScreen, 
-    setActiveScreen, 
-    theme, 
-    toggleTheme, 
-    setIsAddModalOpen, 
-    searchQuery, 
+  const {
+    activeScreen,
+    setActiveScreen,
+    theme,
+    toggleTheme,
+    setIsAddModalOpen,
+    searchQuery,
     setSearchQuery,
-    cloudSyncStatus 
+    cloudSyncStatus
   } = useApp();
 
   const { user, setIsAuthModalOpen } = useAuth();
@@ -49,23 +49,35 @@ export const Header: React.FC = () => {
   return (
     <header className="sticky top-0 z-30 w-full bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-14 flex items-center justify-between gap-4">
-        {/* Mobile Left / Desktop Breadcrumb */}
+
+        {/* Mobile Logo / Desktop Breadcrumb */}
         <div className="flex items-center gap-3">
-          <div className="md:hidden flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg bg-emerald-600 text-white flex items-center justify-center shadow-xs">
-              <ShieldCheck className="w-4 h-4" />
-            </div>
-            <span className="font-bold text-base tracking-tight text-slate-900 dark:text-white">
-              ProofPocket
-            </span>
+
+          {/* Mobile Logo */}
+          <div className="md:hidden flex items-center">
+            <img
+              src="/proofpocket-logo.png"
+              alt="ProofPocket"
+              className="h-8 w-auto max-w-[140px] object-contain flex-shrink-0"
+              loading="eager"
+            />
           </div>
 
+          {/* Desktop Breadcrumb */}
           <div className="hidden md:flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-            <span>ProofPocket</span>
+            <img
+              src="/proofpocket-logo.png"
+              alt="ProofPocket"
+              className="h-8 w-auto max-w-[130px] object-contain flex-shrink-0"
+              loading="eager"
+            />
+
             <span>/</span>
+
             <span className="font-semibold text-slate-900 dark:text-white text-sm">
               {getScreenTitle()}
             </span>
+
             {user ? (
               <span className="ml-2 px-2 py-0.5 rounded-full bg-emerald-50 dark:bg-emerald-950/60 text-emerald-700 dark:text-emerald-400 text-[10px] font-mono flex items-center gap-1 font-medium">
                 <Cloud className="w-3 h-3 text-emerald-600" /> Cloud Synced
@@ -78,7 +90,7 @@ export const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Center / Search bar for Purchases or quick jump */}
+        {/* Search */}
         <div className="flex-1 max-w-md hidden sm:block">
           <div className="relative">
             <Search className="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
@@ -97,9 +109,10 @@ export const Header: React.FC = () => {
           </div>
         </div>
 
-        {/* Right actions */}
+        {/* Right Actions */}
         <div className="flex items-center gap-2">
-          {/* Smart Scan Quick CTA */}
+
+          {/* Smart Scan */}
           <button
             onClick={() => setIsScannerOpen(true)}
             aria-label="Smart Scan Receipt with AI"
@@ -109,10 +122,9 @@ export const Header: React.FC = () => {
             <Sparkles className="w-4 h-4" />
           </button>
 
-          {/* In-app Notification Bell */}
           <NotificationBell />
 
-          {/* Auth Button */}
+          {/* Authentication */}
           {user ? (
             <div className="flex items-center gap-2">
               <button
@@ -121,12 +133,19 @@ export const Header: React.FC = () => {
               >
                 <div className="w-6 h-6 rounded-full bg-emerald-600 text-white flex items-center justify-center text-[10px] uppercase font-bold overflow-hidden">
                   {user.photoURL ? (
-                    <img src={user.photoURL} alt="Avatar" className="w-full h-full object-cover" />
+                    <img
+                      src={user.photoURL}
+                      alt="Avatar"
+                      className="w-full h-full object-cover"
+                    />
                   ) : (
                     user.displayName?.[0] || user.email?.[0] || 'U'
                   )}
                 </div>
-                <span className="truncate max-w-[100px]">{user.displayName || user.email?.split('@')[0]}</span>
+
+                <span className="truncate max-w-[100px]">
+                  {user.displayName || user.email?.split('@')[0]}
+                </span>
               </button>
             </div>
           ) : (
@@ -138,16 +157,20 @@ export const Header: React.FC = () => {
             </button>
           )}
 
-          {/* Theme switcher */}
+          {/* Theme Switcher */}
           <button
             onClick={toggleTheme}
             aria-label="Toggle color theme"
             className="w-9 h-9 rounded-lg flex items-center justify-center text-slate-600 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition-colors cursor-pointer"
           >
-            {theme === 'dark' ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            {theme === 'dark' ? (
+              <Sun className="w-4 h-4" />
+            ) : (
+              <Moon className="w-4 h-4" />
+            )}
           </button>
 
-          {/* Quick Add CTA */}
+          {/* Quick Add */}
           <button
             onClick={() => setIsAddModalOpen(true)}
             className="hidden sm:inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-emerald-600 hover:bg-emerald-500 active:scale-95 rounded-lg shadow-xs transition-all cursor-pointer"
